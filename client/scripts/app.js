@@ -51,9 +51,7 @@ app.send = function(message) {
 };
 
 app.fetch = function() {
-  // var response;
   $.ajax({
-    // This is the url you should use to communicate with the parse API server.
     url: app.server,
     type: 'GET',
     data: JSON.stringify(message),
@@ -70,7 +68,35 @@ app.fetch = function() {
         a.append('</li>');
         jQuery('#chats').append(a);
       }
-      app.filterRoom();
+      app.listRoom();
+    },
+    error: function(data) {
+      console.error('chatterbox: Failed to receive message');
+    }
+  });
+};
+
+app.fetchByRoom = function(targetRoom) {
+  $.ajax({
+    url: app.server,
+    type: 'GET',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function(data) {
+      var ourData = data.results;
+      for (var i = 0; i < ourData.length; i++) {
+        var user = ourData[i].username;
+        var msg = ourData[i].text;
+        var room = ourData[i].roomname;
+        rooms[room] = room;
+        if (targetRoom === room) {
+          var a = $('<li>');
+          a.text(user + ": " + msg + ", room: " + room);
+          a.append('</li>');
+          jQuery('#chats').append(a);
+        }
+      }
+      app.listRoom();
     },
     error: function(data) {
       console.error('chatterbox: Failed to receive message');
@@ -90,7 +116,7 @@ app.addMessage = function(message) {
   $('#chats').append('<li>' + message.username + ': ' + message.text + '</li>');
 };
 
-app.filterRoom = function() {
+app.listRoom = function() {
   $('#roomSelect').empty();
   for (var key in rooms) {
     var option = $('<option></option>');
@@ -107,6 +133,47 @@ app.addRoom = function(room){
 app.addFriend = function() {
 
 };
+
+// $( "selected" )
+//   .change(function() {
+//     $( "selected option:selected" ).each(function() {
+//       console.log('selected?');
+//       var roomName = $(this).val();
+//       app.fetchByRoom(roomName);  
+//     });
+//   })
+//   .trigger( "change" );
+$(document).ready(function(){
+  $('#roomSelect').change(function(){
+    var selectedVal = $(this).val();
+    $.ajax({
+        url: app.server,
+        type: 'GET',
+        data: JSON.stringify(message),
+        contentType: 'application/json',
+        success: function(data) {
+          var ourData = data.results;
+          $('#chats').empty();
+          for (var i = 0; i < ourData.length; i++) {
+            var user = ourData[i].username;
+            var msg = ourData[i].text;
+            var room = ourData[i].roomname;
+            rooms[room] = room;
+            if (selectedVal === ourData[i].roomname) {
+              var a = $('<li>');
+              a.text(user + ": " + msg + ", room: " + room);
+              a.append('</li>');
+              jQuery('#chats').append(a);
+            }
+          }
+          app.listRoom();
+        },
+        error: function(data) {
+          console.error('chatterbox: Failed to receive message');
+        }
+      });
+  });
+});
 
 // setInterval(function() {
 //   app.fetch();
