@@ -5,24 +5,37 @@ var message = {
   roomname: 'something'
 };
 
-$('#submit').on('click', function(){
-  message.username = $('#username').val();
-  message.text = $('#message').val();
-});
+var rooms = {};
 
-var app = {};
+var saveInput = function() {
+  var username = $('#username').val();
+  var message = $('#message').val();
+  app.send({
+    username: username,
+    text: message
+  });
+};
 
-app.init = function() {};
+var app = {
+  server: 'https://api.parse.com/1/classes/chatterbox'
+};
 
-app.send = function() {
+app.init = function() {
+  app.fetch();
+  app.handleSubmit();
+};
+
+app.send = function(message) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function(data) {
         console.log('chatterbox: Message sent');
+        $('#chats').empty();
+        app.fetch();
     },
     error: function(data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -35,7 +48,7 @@ app.fetch = function() {
   // var response;
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    url: app.server,
     type: 'GET',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -45,21 +58,62 @@ app.fetch = function() {
         var user = ourData[i].username;
         var msg = ourData[i].text;
         var room = ourData[i].roomname;
-        // $('#chats').append('<li>' + user + ':' + msg + '</li>');
+        rooms[room] = room;
         var a = $('<li>');
-        // a.text(user);
-        // a.text(":");
-        a.text(user + ":" + msg);
+        a.text(user + ": " + msg + ", room: " + room);
         a.append('</li>');
         jQuery('#chats').append(a);
       }
+      app.filterRoom();
     },
     error: function(data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
       console.error('chatterbox: Failed to receive message');
     }
   });
 };
 
-// console.log("user:" + user + " msg:" + msg + " roomname:" + room);        
-// { results: [{ username:, text:, roomname: },{},{} ... }   
+app.handleSubmit = function() {
+  
+};
+app.clearMessages = function() {
+  $('#chats').empty();
+};
+
+app.addMessage = function(message) {
+  $('#chats').append('<li>' + message.username + ': ' + message.text + '</li>');
+  console.log('added!');
+};
+
+app.filterRoom = function() {
+  for (var key in rooms) {
+    var option = $('<option></option>');
+    option.val(key);
+    option.text(key);
+    $('#roomSelect').append(option);
+  }
+};
+
+app.addRoom = function(room){
+  $('#roomSelect').append('<li>' + room + '</li>');
+};
+
+// setInterval(function() {
+//   app.fetch();
+// }, 1000);
+// setInterval(function() {
+//   $('#chats').empty();
+// }, 5000);
+
+
+// function sendHelper () {
+//   var message = {
+//     username: 'something',
+//     text: 'something',
+//     roomname: 'something'
+//   };
+
+//   $('#submit').on('click', function(){
+//     message.username = $('#username').val();
+//     message.text = $('#message').val();
+//   });
+// }

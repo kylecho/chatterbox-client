@@ -16,14 +16,17 @@
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
+      <div>
+        <select id="roomSelect">
+        </select>
+      </div>
       <div id="user-input">
-        <form onsubmit="return;">
-          <input type="text" name="name" id="username">
-          <input type="text" name="message" id="message">
-          <input type="submit" value="Submit" id="submit">
-        </form>
+        <input type="text" name="name" id="username">
+        <input type="text" name="message" id="message">
+        <input type="button" value="Submit" id="submit" onclick="saveInput()">
       </div>
     </div>
     <div id="chats"></div>
   </body>
 </html>
+
