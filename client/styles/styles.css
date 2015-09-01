@@ -47,6 +47,7 @@ body {
 }
 
 form {
+    display: inline;
     padding: 20px;
     padding-left: 0;
     margin-bottom: 20px;
