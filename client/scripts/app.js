@@ -18,6 +18,10 @@ var saveInput = function() {
   });
 };
 
+var refresh = function() {
+  app.fetch();
+};
+
 var app = {
   server: 'https://api.parse.com/1/classes/chatterbox'
 };
