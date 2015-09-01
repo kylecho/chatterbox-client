@@ -10,9 +10,11 @@ var rooms = {};
 var saveInput = function() {
   var username = $('#username').val();
   var message = $('#message').val();
+  var room = $('#room').val();
   app.send({
     username: username,
-    text: message
+    text: message,
+    roomname: room
   });
 };
 
@@ -73,18 +75,19 @@ app.fetch = function() {
 };
 
 app.handleSubmit = function() {
-  
+
 };
 app.clearMessages = function() {
   $('#chats').empty();
 };
 
+// for test to pass
 app.addMessage = function(message) {
   $('#chats').append('<li>' + message.username + ': ' + message.text + '</li>');
-  console.log('added!');
 };
 
 app.filterRoom = function() {
+  $('#roomSelect').empty();
   for (var key in rooms) {
     var option = $('<option></option>');
     option.val(key);
@@ -95,6 +98,10 @@ app.filterRoom = function() {
 
 app.addRoom = function(room){
   $('#roomSelect').append('<li>' + room + '</li>');
+};
+
+app.addFriend = function() {
+
 };
 
 // setInterval(function() {
